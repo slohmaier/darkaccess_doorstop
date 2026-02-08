@@ -171,8 +171,8 @@ def process_html(filepath, project_name=""):
 
     # --- <head> replacements ---
 
-    # Add lang and data-bs-theme to <html>
-    html = re.sub(r'<html\b[^>]*>', '<html lang="en" data-bs-theme="light">', html)
+    # Add lang to <html> (data-bs-theme set by dark mode JS in <head>)
+    html = re.sub(r'<html\b[^>]*>', '<html lang="en">', html)
 
     # Add viewport meta if not present
     if 'name="viewport"' not in html:
@@ -192,8 +192,9 @@ def process_html(filepath, project_name=""):
     html = re.sub(r'<link[^>]*href="[^"]*general\.css"[^>]*/?>[\r\n]*', '', html)
     html = re.sub(r'<link[^>]*href="[^"]*doorstop\.css"[^>]*/?>[\r\n]*', '', html)
 
-    # Insert inline CSS after Bootstrap CDN link
-    html = html.replace(BOOTSTRAP_CSS_CDN, BOOTSTRAP_CSS_CDN + '\n  ' + INLINE_CSS)
+    # Insert inline CSS and dark mode JS after Bootstrap CDN link
+    # Dark mode JS must be in <head> to apply before first paint
+    html = html.replace(BOOTSTRAP_CSS_CDN, BOOTSTRAP_CSS_CDN + '\n  ' + INLINE_CSS + '\n  ' + DARK_MODE_JS)
 
     # Remove MathJax script tags
     html = re.sub(
@@ -250,10 +251,6 @@ def process_html(filepath, project_name=""):
         BOOTSTRAP_JS_CDN,
         html
     )
-
-    # --- Inject dark mode JS before </body> ---
-
-    html = html.replace('</body>', DARK_MODE_JS + '\n</body>')
 
     with open(filepath, 'w', encoding='utf-8') as f:
         f.write(html)
