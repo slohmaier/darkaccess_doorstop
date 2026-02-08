@@ -18,6 +18,23 @@ Add as a git submodule to your project:
 git submodule add -b main git@github.com:slohmaier/darkaccess_doorstop.git tools/darkaccess_doorstop
 ```
 
+When cloning a project that uses this submodule, initialize it with:
+
+```bash
+git clone --recurse-submodules <your-project-url>
+
+# Or if already cloned without submodules:
+git submodule update --init --recursive
+```
+
+To update the submodule to the latest version:
+
+```bash
+git submodule update --remote tools/darkaccess_doorstop
+git add tools/darkaccess_doorstop
+git commit -m "Update darkaccess_doorstop submodule"
+```
+
 ## SCons Integration
 
 In your `SConstruct`:
